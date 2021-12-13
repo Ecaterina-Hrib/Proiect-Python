@@ -15,14 +15,19 @@ def load_expenses_directory(directory_path):
         print(file)
         absolute_path = default_folder + file
 
-        if "target.json" == file and file.endswith(".json"):
+        if "target.json" != file and file.endswith(".json"):
             exists = verify_if_exists(file)
             if exists is False:
                 print("loading file", file, " to database")
                 create_expense(absolute_path)
-            else:
-                # timestamp and epocs yay
-                timpestamp = 1
+        else:
+            print("Don't forget to load file target.json")
+
+        all_records = run_verify()
+        for record in all_records:
+            if record[0] not in list_of_files:
+                print("delete file ", record[0])
+                delete_from_db(record[0])
 
 
 def load_target(file):

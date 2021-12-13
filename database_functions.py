@@ -63,9 +63,10 @@ def verify_if_exists(file_path):
         # data_file_dict = json_to_dict(file_path)
         # str_date, epoch = last_modification_file(file_path)
         sql_select = "select * from expenses where id_file=%s "
-        cursor.execute(sql_select, file_path)
+        cursor.execute(sql_select, (file_path,))
         records = cursor.fetchone()
         if records is not None:
+            print("The file ", file_path, " already exists")
             return True
 
     except (Exception, psycopg2.Error) as e:
@@ -80,8 +81,19 @@ def run_verify():
         sql_select = "select * from expenses"
         cursor.execute(sql_select)
         records = cursor.fetchall()
-        print(records)
         cursor.close()
+        return records
 
+    except Exception as e:
+        print(e)
+
+
+def delete_from_db(file):
+    try:
+        conn, cursor = connect_to_db()
+        sql_delete = """DELETE FROM expenses where id_file = %s"""
+        cursor.execute(sql_delete, (file,))
+        conn.commit()
+        cursor.close()
     except Exception as e:
         print(e)
