@@ -1,0 +1,14 @@
+
+
+CREATE TABLE target(
+category varchar(200) primary key,
+price int,
+last_modification bigint
+);
+
+CREATE TABLE expenses(
+id_file varchar(200) primary key,
+price int,
+category varchar(200),
+last_modification bigint
+);
