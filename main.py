@@ -3,6 +3,7 @@ from database_functions_expense import *
 from database_function_target import *
 from win10toast import ToastNotifier
 import os
+import time
 
 default_folder = "D:/_ user ecaaa/Documents/GitHub/Proiect-Python/Expenses/"
 username_db = 'ecaterina'
@@ -24,7 +25,7 @@ def load_expenses_directory(directory_path):
             if exists is False:
                 print("loading file", file, " to database")
                 create_expense(absolute_path)
-                calculate_financial_status()
+
 
             else:
                 all_records = run_verify_expenses()
@@ -38,11 +39,11 @@ def load_expenses_directory(directory_path):
                     else:
 
                         str_date, epoch = last_modification_file(absolute_path)
-
+                        print("last modification is on ", str_date)
                         if epoch > record[len(record) - 1]:
                             print("Update the file ", record[0])
                             update_db_expense(absolute_path, epoch)
-                            calculate_financial_status()
+
 
         else:
             print(" load file target.json")
@@ -57,31 +58,29 @@ def load_expenses_directory(directory_path):
 
                 else:
                     load_target(absolute_path)
+    calculate_financial_status()
 
 
 def calculate_financial_status():
     toast = ToastNotifier()
     all_records = select_price_and_category()
     for category_target in all_records:
-        print(category_target)
         result = count_per_needs(category_target[0])
-        print(result)
         if result is not None:
             if category_target[1] < result:
-                toast.show_toast("ALERT EXPENSES", "you excedded over the limit ", duration=20,
+                excedded = result - category_target[1]
+                toast.show_toast("ALERT EXPENSES", "you excedded over the limit on category {} with {} $".format(
+                    category_target[0].upper(), excedded), duration=10,
                                  icon_path="D:\\_ user ecaaa\\Documents\\GitHub\\Proiect-Python\\download.png")
-
 
 
 if __name__ == '__main__':
     run_verify_expenses()
-    load_expenses_directory(default_folder)
-    categories_list = ["utilities", "economics", "other", "fun"]
-    calculate_financial_status()
-    # while True:
-    #     try:
-    #
-    #
-    #
-    #     except KeyboardInterrupt:
-    #         print("you closed the connection")
+
+    while True:
+        try:
+            load_expenses_directory(default_folder)
+
+
+        except KeyboardInterrupt:
+            print("you closed the connection")

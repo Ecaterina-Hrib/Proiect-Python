@@ -5,8 +5,12 @@ from database_function_target import *
 def count_per_needs(category):
     try:
         conn, cursor = connect_to_db()
-        sql_select = "SELECT SUM(price) from expenses where category = %s"
-        cursor.execute(sql_select, (category,))
+        if category =='others':
+            sql_select = "SELECT SUM(price) from expenses where category = %s or category=''"
+            cursor.execute(sql_select, (category,))
+        else:
+            sql_select = "SELECT SUM(price) from expenses where category = %s"
+            cursor.execute(sql_select, (category,))
         result = cursor.fetchone()
         cursor.close()
         return result[0]
