@@ -35,7 +35,7 @@ def create_expense(file_path):
         str_date, epoch = last_modification_file(file_path)
         print("insert file: ", file_path)
         insert_query = """ INSERT INTO expenses (id_file, category, price,last_modification) VALUES (%s,%s,%s,%s)"""
-        values_query = (file, data_file_dict['category'], data_file_dict['price'], epoch)
+        values_query = (file, data_file_dict['category'].lower(), data_file_dict['price'], epoch)
         cursor.execute(insert_query, values_query)
         print("Executed succesfully")
         print("New expense added")
@@ -95,7 +95,7 @@ def update_db_expense(file_path, timestamp):
         file_list = file_path.split("/")
         file = file_list[6]
         sql_update = """Update expenses set price=%s, category= %s, last_modification = %s where id_file = %s"""
-        cursor.execute(sql_update, (data_file_dict['price'], data_file_dict['category'], timestamp, file))
+        cursor.execute(sql_update, (data_file_dict['price'], data_file_dict['category'].lower(), timestamp, file))
         conn.commit()
         conn.close()
     except Exception as e:

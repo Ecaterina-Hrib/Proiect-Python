@@ -1,5 +1,8 @@
+from calcules import *
 from database_functions_expense import *
 from database_function_target import *
+from win10toast import ToastNotifier
+import os
 
 default_folder = "D:/_ user ecaaa/Documents/GitHub/Proiect-Python/Expenses/"
 username_db = 'ecaterina'
@@ -21,6 +24,7 @@ def load_expenses_directory(directory_path):
             if exists is False:
                 print("loading file", file, " to database")
                 create_expense(absolute_path)
+                calculate_financial_status()
 
             else:
                 all_records = run_verify_expenses()
@@ -38,6 +42,7 @@ def load_expenses_directory(directory_path):
                         if epoch > record[len(record) - 1]:
                             print("Update the file ", record[0])
                             update_db_expense(absolute_path, epoch)
+                            calculate_financial_status()
 
         else:
             print(" load file target.json")
@@ -48,17 +53,31 @@ def load_expenses_directory(directory_path):
                     for record in exists:
                         if epoch > record[len(record) - 1]:
                             print("Update the file ", file)
-                            update_target(absolute_path, epoch)
+                            update_target(absolute_path)
 
                 else:
                     load_target(absolute_path)
 
 
+def calculate_financial_status():
+    toast = ToastNotifier()
+    all_records = select_price_and_category()
+    for category_target in all_records:
+        print(category_target)
+        result = count_per_needs(category_target[0])
+        print(result)
+        if result is not None:
+            if category_target[1] < result:
+                toast.show_toast("ALERT EXPENSES", "you excedded over the limit ", duration=20,
+                                 icon_path="D:\\_ user ecaaa\\Documents\\GitHub\\Proiect-Python\\download.png")
+
+
+
 if __name__ == '__main__':
-    connection, cur = connect_to_db()
     run_verify_expenses()
     load_expenses_directory(default_folder)
     categories_list = ["utilities", "economics", "other", "fun"]
+    calculate_financial_status()
     # while True:
     #     try:
     #
@@ -66,4 +85,3 @@ if __name__ == '__main__':
     #
     #     except KeyboardInterrupt:
     #         print("you closed the connection")
-    disconnect_to_db(connection, cur)

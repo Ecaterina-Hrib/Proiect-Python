@@ -9,7 +9,7 @@ def load_target(file_path):
         print("insert file: ", file_path)
         for key, value in data_file_dict.items():
             insert_query = """ INSERT INTO target ( category, price,last_modification) VALUES (%s,%s,%s)"""
-            values_query = (key.lower(), value, epoch)
+            values_query = (key.lower(), value.lower(), epoch)
             cursor.execute(insert_query, values_query)
             print("Executed successfully")
             print("New expense added")
@@ -21,13 +21,14 @@ def load_target(file_path):
     return False
 
 
-def update_target(file_path,timestamp):
+def update_target(file_path):
     try:
         conn, cursor = connect_to_db()
         data_file_dict = json_to_dict(file_path)
-        for key, value in data_file_dict:
+        str_date, epoch = last_modification_file(file_path)
+        for key, value in data_file_dict.items():
             sql_update = "Update target set price=%s, last_modification = %s where category= %s"
-            cursor.execute(sql_update, (value, timestamp, key.lower()))
+            cursor.execute(sql_update, (value, epoch, key.lower()))
             conn.commit()
         conn.close()
     except Exception as e:
