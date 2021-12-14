@@ -80,7 +80,7 @@ if __name__ == '__main__':
     while True:
         try:
             load_expenses_directory(default_folder)
-
+            time.sleep(30)
 
         except KeyboardInterrupt:
             print("you closed the connection")

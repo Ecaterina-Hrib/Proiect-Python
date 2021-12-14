@@ -41,6 +41,7 @@ def create_expense(file_path):
         print("New expense added")
         conn.commit()
         cursor.close()
+        conn.close()
         return True
     except (Exception, psycopg2.Error) as e:
         print("error: ", e)
@@ -54,6 +55,8 @@ def verify_if_exists(file_path):
         sql_select = "select * from expenses where id_file=%s "
         cursor.execute(sql_select, (file_path,))
         records = cursor.fetchone()
+        cursor.close()
+        conn.close()
         if records is not None:
             print("The file ", file_path, " already exists")
             return True
@@ -71,6 +74,7 @@ def run_verify_expenses():
         cursor.execute(sql_select)
         records = cursor.fetchall()
         cursor.close()
+        conn.close()
         return records
 
     except Exception as e:
@@ -84,6 +88,7 @@ def delete_from_db(file):
         cursor.execute(sql_delete, (file,))
         conn.commit()
         cursor.close()
+        conn.close()
     except Exception as e:
         print(e)
 

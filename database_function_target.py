@@ -15,6 +15,7 @@ def load_target(file_path):
             print("New expense added")
             conn.commit()
         cursor.close()
+        conn.close()
         return True
     except (Exception, psycopg2.Error) as e:
         print("error: ", e)
@@ -30,7 +31,9 @@ def update_target(file_path):
             sql_update = "Update target set price=%s, last_modification = %s where category= %s"
             cursor.execute(sql_update, (value, epoch, key.lower()))
             conn.commit()
+        cursor.close()
         conn.close()
+
     except Exception as e:
         print(e)
 
@@ -42,6 +45,7 @@ def run_verify_target():
         cursor.execute(sql_select)
         records = cursor.fetchall()
         cursor.close()
+        conn.close()
         return records
 
     except Exception as e:

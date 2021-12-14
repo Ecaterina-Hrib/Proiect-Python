@@ -13,6 +13,7 @@ def count_per_needs(category):
             cursor.execute(sql_select, (category,))
         result = cursor.fetchone()
         cursor.close()
+        conn.close()
         return result[0]
     except Exception as e:
         print(e)
@@ -25,6 +26,7 @@ def select_price_and_category():
         cursor.execute(sql_select)
         result = cursor.fetchall()
         cursor.close()
+        conn.close()
         return result
     except Exception as e:
         print(e)
