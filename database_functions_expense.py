@@ -17,15 +17,6 @@ def connect_to_db():
         print(connection)
         cursor = connection.cursor()
         return connection, cursor
-        # print('PostgreSQL database version:')
-        # cursor.execute('SELECT version()')
-        # db_version = cursor.fetchone()
-        # print(db_version)
-        # cursor.close()
-
-        # if connection is not None:
-        #     print("exit connection")
-        #     connection.close()
     except Exception as e:
         print(e)
 
@@ -60,8 +51,6 @@ def verify_if_exists(file_path):
     try:
         conn, cursor = connect_to_db()
         print("check if exist file: ", file_path)
-        # data_file_dict = json_to_dict(file_path)
-        # str_date, epoch = last_modification_file(file_path)
         sql_select = "select * from expenses where id_file=%s "
         cursor.execute(sql_select, (file_path,))
         records = cursor.fetchone()
@@ -75,7 +64,7 @@ def verify_if_exists(file_path):
     return False
 
 
-def run_verify():
+def run_verify_expenses():
     try:
         conn, cursor = connect_to_db()
         sql_select = "select * from expenses"
@@ -95,5 +84,19 @@ def delete_from_db(file):
         cursor.execute(sql_delete, (file,))
         conn.commit()
         cursor.close()
+    except Exception as e:
+        print(e)
+
+
+def update_db_expense(file_path, timestamp):
+    try:
+        conn, cursor = connect_to_db()
+        data_file_dict = json_to_dict(file_path)
+        file_list = file_path.split("/")
+        file = file_list[6]
+        sql_update = """Update expenses set price=%s, category= %s, last_modification = %s where id_file = %s"""
+        cursor.execute(sql_update, (data_file_dict['price'], data_file_dict['category'], timestamp, file))
+        conn.commit()
+        conn.close()
     except Exception as e:
         print(e)
