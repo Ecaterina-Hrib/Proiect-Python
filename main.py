@@ -71,7 +71,7 @@ def calculate_financial_status():
                 excedded = result - category_target[1]
                 toast.show_toast("ALERT EXPENSES", "you excedded over the limit on category {} with {} $".format(
                     category_target[0].upper(), excedded), duration=10,
-                                 icon_path="D:\\_ user ecaaa\\Documents\\GitHub\\Proiect-Python\\download.png")
+                                 )
 
 
 if __name__ == '__main__':
